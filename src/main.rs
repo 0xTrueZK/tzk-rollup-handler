@@ -28,6 +28,7 @@ async fn create_instance(ami_id: String) -> Result<impl Reply, Rejection> {
             Err(warp::reject::reject())
         },
     }
+
 }
 
 async fn create_instance_handler(body: InstanceRequest) -> Result<impl Reply, Rejection> {
