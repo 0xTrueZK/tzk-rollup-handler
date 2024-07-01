@@ -28,7 +28,16 @@ async fn create_instance(ami_id: String, instance_name: String) -> Result<impl R
         .await;
 
     match result {
-        Ok(_) => Ok(warp::reply::with_status("Instance created successfully", StatusCode::OK)),
+        Ok(output) => {
+            if let Some(instances) = output.instances {
+                if let Some(instance) = instances.first() {
+                    if let Some(instance_id) = &instance.instance_id {
+                        return Ok(warp::reply::with_status(format!("Instance created successfully with ID: {}", instance_id), StatusCode::OK));
+                    }
+                }
+            }
+            Err(warp::reject::reject())
+        },
         Err(e) => {
             eprintln!("Error creating instance: {}", e);
             Err(warp::reject::reject())
